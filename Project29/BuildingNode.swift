@@ -71,4 +71,29 @@ class BuildingNode: SKSpriteNode {
 
         return img
     }
+    
+    func hit(at point: CGPoint) {
+        //where the building was hit
+        let convertedPoint = CGPoint(x: point.x + size.width / 2.0, y: abs(point.y - (size.height / 2.0)))
+
+        //Create a new Core Graphics context the size of our current sprite.
+        let renderer = UIGraphicsImageRenderer(size: size)
+        let img = renderer.image { ctx in
+            //Draw our current building image into the context.
+            currentImage.draw(at: .zero)
+
+            // an ellipse at the collision point.
+            ctx.cgContext.addEllipse(in: CGRect(x: convertedPoint.x - 32, y: convertedPoint.y - 32, width: 64, height: 64))
+            //cut an ellipse out of our image.
+            ctx.cgContext.setBlendMode(.clear)
+            ctx.cgContext.drawPath(using: .fill)
+        }
+
+        //Convert the contents of the Core Graphics context back to a UIImage, which is saved in the currentImage property for next time we’re hit, and used to update our building texture.
+        texture = SKTexture(image: img)
+        currentImage = img
+
+        //recalculate the per-pixel physics for our damaged building.
+        configurePhysics()
+    }
 }

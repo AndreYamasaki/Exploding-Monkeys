@@ -175,4 +175,64 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 destroy(player: player2)
             }
     }
+    
+    func destroy(player: SKSpriteNode) {
+        if let explosion = SKEmitterNode(fileNamed: "hitPlayer") {
+            explosion.position = player.position
+            addChild(explosion)
+        }
+
+        player.removeFromParent()
+        banana.removeFromParent()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            let newGame = GameScene(size: self.size)
+            newGame.viewController = self.viewController
+            self.viewController?.currentGame = newGame
+
+            self.changePlayer()
+            newGame.currentPlayer = self.currentPlayer
+
+            let transition = SKTransition.doorway(withDuration: 1.5)
+            self.view?.presentScene(newGame, transition: transition)
+        }
+    }
+    
+    func bananaHit(building: SKNode, atPoint contactPoint: CGPoint) {
+        guard let building = building as? BuildingNode else { return }
+        let buildingLocation = convert(contactPoint, to: building)
+        building.hit(at: buildingLocation)
+
+        if let explosion = SKEmitterNode(fileNamed: "hitBuilding") {
+            explosion.position = contactPoint
+            addChild(explosion)
+        }
+
+        banana.name = ""
+        banana.removeFromParent()
+        banana = nil
+
+        changePlayer()
+    }
+    
+    func changePlayer() {
+        if currentPlayer == 1 {
+            currentPlayer = 2
+        } else {
+            currentPlayer = 1
+        }
+
+        viewController?.activatePlayer(number: currentPlayer)
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        
+        guard banana != nil else { return }
+
+            if abs(banana.position.y) > 1000 {
+                banana.removeFromParent()
+                banana = nil
+                changePlayer()
+            }
+    }
 }
