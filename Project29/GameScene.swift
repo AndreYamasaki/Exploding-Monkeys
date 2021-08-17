@@ -16,7 +16,12 @@ enum CollisionTypes: UInt32 {
 
 class GameScene: SKScene {
     
+    //MARK: - Attributes
+    
     var buildings = [BuildingNode]()
+    weak var viewController: GameViewController?
+    
+    //MARK: - didMove
     
     override func didMove(to view: SKView) {
         
@@ -24,6 +29,8 @@ class GameScene: SKScene {
 
             createBuildings()
     }
+    
+    //MARK: - Methods
     
     func createBuildings() {
         
@@ -40,5 +47,9 @@ class GameScene: SKScene {
 
                 buildings.append(building)
             }
+    }
+    
+    func launch(angle: Int, velocity: Int) {
+        
     }
 }
