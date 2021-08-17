@@ -19,11 +19,36 @@ class GameViewController: UIViewController {
     @IBOutlet var velocityLabel: UILabel!
     @IBOutlet var launchButton: UIButton!
     @IBOutlet var playerNumber: UILabel!
+    @IBOutlet var newGameButton: UIButton!
     
-
+    @IBOutlet var player1ScoreLabel: UILabel!
+    @IBOutlet var player2ScoreLabel: UILabel!
+    
+    // challenge 1
+        var player1Score: Int = 0 {
+            didSet {
+                player1ScoreLabel.text = "Score: \(player1Score)"
+            }
+        }
+        var player2Score: Int = 0 {
+            didSet {
+                player2ScoreLabel.text = "Score: \(player2Score)"
+            }
+        }
+    
+    // challenge 1
+        var gameStopped = false {
+            didSet {
+                newGameButton.isHidden = !gameStopped
+            }
+        }
+    
     //MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        player1ScoreLabel.text = "Score: \(player1Score)"
+        player2ScoreLabel.text = "Score: \(player2Score)"
         
         angleChanged(angleSlider)
         velocityChanged(velocitySlider)
@@ -107,4 +132,45 @@ class GameViewController: UIViewController {
 
         launchButton.isHidden = false
     }
+    
+    func gameControls(isHidden: Bool) {
+            angleSlider.isHidden = isHidden
+            angleLabel.isHidden = isHidden
+            velocitySlider.isHidden = isHidden
+            velocityLabel.isHidden = isHidden
+            launchButton.isHidden = isHidden
+        }
+        
+        // challenge 1
+        func playerScored(player: Int) {
+            if player == 1 {
+                player1Score += 1
+            }
+            else {
+                player2Score += 1
+            }
+            
+            if player1Score == 3 {
+                playerNumber.text = "PLAYER 1 WINS"
+                stopGame()
+            }
+            else if player2Score == 3 {
+                playerNumber.text = "PLAYER 2 WINS"
+                stopGame()
+            }
+        }
+        
+        // challenge 1
+        func stopGame() {
+            gameControls(isHidden: true)
+            gameStopped = true
+        }
+        
+        // challenge 1
+        @IBAction func newGameAction(_ sender: Any) {
+            gameStopped = false
+            player1Score = 0
+            player2Score = 0
+            currentGame?.newGame()
+        }
 }

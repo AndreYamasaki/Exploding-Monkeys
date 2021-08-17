@@ -198,6 +198,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    func newGame() {
+            // prepare a new game scene to transition to
+            let newGame = GameScene(size: self.size)
+            newGame.viewController = viewController
+            viewController?.currentGame = newGame
+            
+            changePlayer()
+            newGame.currentPlayer = currentPlayer
+            
+            let transition = SKTransition.doorway(withDuration: 1.5)
+            view?.presentScene(newGame, transition: transition)
+        }
+    
     func bananaHit(building: SKNode, atPoint contactPoint: CGPoint) {
         guard let building = building as? BuildingNode else { return }
         let buildingLocation = convert(contactPoint, to: building)
